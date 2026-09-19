@@ -86,6 +86,32 @@
       "demo": true
     },
     {
+      "id": "sk-zong-2017",
+      "category": "video",
+      "title": "為食小達人 之 甜糭大比拼",
+      "blurb": "就嚟端午節，沙律妹同哥哥Kayden試3款唔同店舖出品的甜糭。",
+      "body": "Sunday Kiss　2017年5月16日\n\n【#為食小達人】就嚟端午節，今集「為食小達人」搵嚟沙律妹同哥哥Kayden，試3款唔同店舖出品的甜糭，究竟邊款較得呢兩位小達人歡心呢？\n\n畫面註解：呢個紅豆腍啲！",
+      "date": "2017-05",
+      "client": "Sunday Kiss",
+      "cover": "media/sundaykiss/01-zong.jpg",
+      "gallery": [],
+      "video": "https://www.facebook.com/SundayKiss/videos/1451513754892291/",
+      "link": "https://www.facebook.com/SundayKiss/videos/1451513754892291/"
+    },
+    {
+      "id": "sk-sausage-2017",
+      "category": "video",
+      "title": "為食小達人：兩兄弟試食4款零食腸",
+      "blurb": "兩兄弟試食4款零食腸，有一款哥哥俾得特別低分。",
+      "body": "Sunday Kiss　2017年6月20日\n\n【#為食小達人】今集搵嚟兩兄弟試食4款零食腸！有一款哥哥俾得特別低分，大家又同唔同意呢個分數呢？\n\n畫面註解：好黐啊",
+      "date": "2017-06",
+      "client": "Sunday Kiss",
+      "cover": "media/sundaykiss/02-sausage.jpg",
+      "gallery": [],
+      "video": "https://www.facebook.com/SundayKiss/videos/1513744055355438/",
+      "link": "https://www.facebook.com/SundayKiss/videos/1513744055355438/"
+    },
+    {
       "id": "demo-video",
       "category": "video",
       "title": "雨中天台",

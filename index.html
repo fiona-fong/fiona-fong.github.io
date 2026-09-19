@@ -158,6 +158,7 @@
     .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; margin: 22px 0; }
     .gallery img, .thumbs img { width: 100%; height: 160px; object-fit: cover; cursor: pointer; }
     .video-wrap { position: relative; padding-top: 56.25%; margin: 18px 0 24px; background: #000; }
+    .video-wrap.square { padding-top: 100%; max-width: 42em; }
     .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
     .outlink { margin: 18px 0; }
 
@@ -421,6 +422,11 @@
       if (m) return "https://www.youtube.com/embed/" + m[1];
       m = u.match(/vimeo\.com\/(?:video\/)?(\d+)/);
       if (m) return "https://player.vimeo.com/video/" + m[1];
+      m = u.match(/facebook\.com\/.+\/videos\/\d+/);
+      if (m) {
+        const href = u.split("?")[0].replace(/\/$/, "") + "/";
+        return "https://www.facebook.com/plugins/video.php?href=" + encodeURIComponent(href) + "&show_text=false&t=0";
+      }
       return "";
     }
     function newId() {
@@ -746,7 +752,7 @@
           <h1>${escapeHtml(w.title)}</h1>
           <p class="by">${escapeHtml([w.date, w.client].filter(Boolean).join("　"))}</p>
           <div class="body">${paragraphs(w.body || w.blurb)}</div>
-          ${embed ? `<div class="video-wrap"><iframe src="${embed}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="${escapeHtml(w.title)}"></iframe></div>` : ""}
+          ${embed ? `<div class="video-wrap${/facebook\.com/.test(w.video || "") ? " square" : ""}"><iframe src="${embed}" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; accelerometer; gyroscope" allowfullscreen title="${escapeHtml(w.title)}"></iframe></div>` : ""}
           ${(w.gallery || []).length ? `<div class="gallery">${w.gallery.map(src => `<img src="${escapeHtml(src)}" alt="">`).join("")}</div>` : ""}
           ${w.link ? `<p class="outlink"><a class="btn" href="${escapeHtml(w.link)}" target="_blank" rel="noopener">查看原文／連結</a></p>` : ""}
         </article>
