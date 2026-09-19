@@ -2,7 +2,7 @@ Fiona Fong 作品集
 ================
 
 上網後網址：
-  https://cheungsiredu.github.io/fiona-fong/
+  https://fiona-fong.github.io/
 
 本機預覽：雙擊「開始本機網站.command」
 

@@ -9,7 +9,7 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REPO = "CheungSirEdu/fiona-fong"
+REPO = "fiona-fong/fiona-fong.github.io"
 ITER = 120000
 GH = "/Users/t02/bin/gh"
 
