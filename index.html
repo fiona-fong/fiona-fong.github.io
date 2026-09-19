@@ -159,7 +159,10 @@
     .gallery img, .thumbs img { width: 100%; height: 160px; object-fit: cover; cursor: pointer; }
     .video-wrap { position: relative; padding-top: 56.25%; margin: 18px 0 24px; background: #000; }
     .video-wrap.square { padding-top: 100%; max-width: 42em; }
-    .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .video-wrap iframe, .video-wrap video {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000;
+    }
+    .video-wrap video { object-fit: contain; }
     .outlink { margin: 18px 0; }
 
     body.editing .card { cursor: grab; }
@@ -735,11 +738,24 @@
       }).join("");
     }
 
+    function renderMedia(w) {
+      const src = String(w.video || "");
+      if (/\.(mp4|webm|ogg)(\?|$)/i.test(src)) {
+        const poster = w.cover ? ` poster="${escapeHtml(w.cover)}"` : "";
+        return `<div class="video-wrap square"><video src="${escapeHtml(src)}" controls playsinline preload="metadata"${poster}></video></div>`;
+      }
+      const embed = videoEmbed(src);
+      if (embed) {
+        return `<div class="video-wrap${/facebook\.com/.test(src) ? " square" : ""}"><iframe src="${embed}" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; accelerometer; gyroscope" allowfullscreen title="${escapeHtml(w.title)}"></iframe></div>`;
+      }
+      if (w.cover) return `<div class="hero-cover"><img src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></div>`;
+      return "";
+    }
+
     function renderWork(id) {
       const w = workById(id);
       if (!w) return renderHome();
       const cat = catById(w.category);
-      const embed = videoEmbed(w.video);
       if (editing) return renderWorkEdit(w, cat);
       $("app").innerHTML = `
         <article class="story">
@@ -747,12 +763,11 @@
             <a class="btn ghost" href="#/">← 回首頁</a>
             ${cat ? `<a class="btn ghost" href="#/c/${cat.id}">← ${escapeHtml(cat.title)}</a>` : ""}
           </div>
-          ${w.cover ? `<div class="hero-cover"><img src="${escapeHtml(w.cover)}" alt="${escapeHtml(w.title)}"></div>` : ""}
+          ${renderMedia(w)}
           <div class="kicker">${escapeHtml(cat ? cat.title : "")}${w.demo ? `<span class="badge">示範</span>` : ""}</div>
           <h1>${escapeHtml(w.title)}</h1>
           <p class="by">${escapeHtml([w.date, w.client].filter(Boolean).join("　"))}</p>
           <div class="body">${paragraphs(w.body || w.blurb)}</div>
-          ${embed ? `<div class="video-wrap${/facebook\.com/.test(w.video || "") ? " square" : ""}"><iframe src="${embed}" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; accelerometer; gyroscope" allowfullscreen title="${escapeHtml(w.title)}"></iframe></div>` : ""}
           ${(w.gallery || []).length ? `<div class="gallery">${w.gallery.map(src => `<img src="${escapeHtml(src)}" alt="">`).join("")}</div>` : ""}
           ${w.link ? `<p class="outlink"><a class="btn" href="${escapeHtml(w.link)}" target="_blank" rel="noopener">查看原文／連結</a></p>` : ""}
         </article>
