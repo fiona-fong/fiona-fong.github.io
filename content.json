@@ -44,48 +44,6 @@
       "link": "https://www.ohpama.com/1037410/%E6%9C%AC%E5%9C%B0%E5%8D%87%E5%AD%B8/%E4%B8%AD%E5%AD%B8/%e6%b8%af%e5%a4%a7%e5%90%8c%e5%ad%b8%e6%9c%83%e6%9b%b8%e9%99%a2-8%e4%bd%8d%e5%ad%b8%e7%94%9f-250%e5%85%ac%e9%87%8c%e6%a5%b5%e9%99%90%e9%a6%ac%e6%8b%89%e6%9d%be%e6%8c%91%e6%88%b0/"
     },
     {
-      "id": "demo-project",
-      "category": "project",
-      "title": "夜雨街頭",
-      "blurb": "示範專題。雨夜裡，筆記本與相機放在欄杆上。",
-      "body": "這是示範專題，方便先睇排版。\n\n請撳右上角「編輯」，然後刪除、改寫，或換成你的真實作品。你可以改標題、內文、封面，亦可以再加相片。",
-      "date": "2026-09",
-      "client": "",
-      "cover": "media/demo-project.jpg",
-      "gallery": [],
-      "video": "",
-      "link": "",
-      "demo": true
-    },
-    {
-      "id": "demo-ad",
-      "category": "ad",
-      "title": "絲絨與光",
-      "blurb": "示範廣告。大理石桌上一瓶香水與絲巾。",
-      "body": "這是示範廣告作品。請改成你拍過或策劃過的廣告、品牌短片或平面。\n\n封面可以重新上傳。外部連結可以貼客戶網站或投放頁。",
-      "date": "2026-08",
-      "client": "示範品牌",
-      "cover": "media/demo-ad.jpg",
-      "gallery": [],
-      "video": "",
-      "link": "",
-      "demo": true
-    },
-    {
-      "id": "demo-interview",
-      "category": "interview",
-      "title": "茶餐桌上的訪問",
-      "blurb": "示範訪問。兩張空椅、兩杯茶、一部錄音機。",
-      "body": "這是示範訪問。請改成你做過的人物專訪。\n\n正文寫訪問摘要或刊登媒體。若訪問有出街影片，把 YouTube 或 Vimeo 網址貼在「影片網址」。",
-      "date": "2026-07",
-      "client": "",
-      "cover": "media/demo-interview.jpg",
-      "gallery": [],
-      "video": "",
-      "link": "",
-      "demo": true
-    },
-    {
       "id": "sk-zong-2017",
       "category": "video",
       "title": "為食小達人 之 甜糭大比拼",
@@ -110,20 +68,6 @@
       "gallery": [],
       "video": "media/sundaykiss/02-sausage.mp4",
       "link": "https://www.facebook.com/SundayKiss/videos/1513744055355438/"
-    },
-    {
-      "id": "demo-video",
-      "category": "video",
-      "title": "雨中天台",
-      "blurb": "示範影片。夜雨裡一部攝影機對住城市。",
-      "body": "這是示範影片作品。GitHub 不適合放大型影片檔，請把影片放上 YouTube 或 Vimeo，然後在編輯頁貼上網址，這裡會自動嵌入播放。",
-      "date": "2026-06",
-      "client": "",
-      "cover": "media/demo-video.jpg",
-      "gallery": [],
-      "video": "",
-      "link": "",
-      "demo": true
     }
   ]
 }
