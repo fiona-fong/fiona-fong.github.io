@@ -136,6 +136,16 @@
       color: var(--muted); font-weight: 700; background: var(--card);
     }
     .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .add-tile {
+      appearance: none; display: flex; align-items: center; justify-content: center;
+      border: 2px dashed var(--line); background: transparent; color: var(--muted);
+      min-height: 120px; font-weight: 800; font-size: 15px; cursor: pointer;
+      padding: 18px; text-align: center; width: 100%;
+    }
+    .add-tile:hover { border-color: var(--accent); color: var(--accent); }
+    .work-grid .add-tile { min-height: 220px; }
+    .body-tools { display: flex; gap: 8px; flex-wrap: wrap; margin: 6px 0 10px; }
+    .body-tools .btn { min-height: 36px; font-size: 12px; padding: 6px 12px; }
 
     article.story .hero-cover { margin: 0 0 22px; }
     article.story .hero-cover img { width: 100%; max-height: 70vh; object-fit: cover; }
@@ -657,9 +667,11 @@
           <h1>${escapeHtml(site().name)}</h1>
           <p class="lead">${escapeHtml(site().tagline)}</p>
         </section>
-        ${editing ? `<p class="note">編輯中：可以改分類名稱、上移／下移、拖曳排版。作品請入分類或撳「打開修改」。示範作品刪得。完成後撳右上角「完成」。</p>
+        ${editing ? `<p class="note">編輯中：可以喺呢頁加分類、加作品，或者改現有項目。入作品頁都可以再加標題、段落同相片。完成後撳右上角「完成」。</p>
           <div class="bar">
-            <button class="btn" type="button" id="btnSite">改網站名稱／關於</button>
+            <button class="btn accent" type="button" data-add-work="">＋ 新增作品</button>
+            <button class="btn" type="button" data-add-cat>＋ 新增分類</button>
+            <button class="btn ghost" type="button" id="btnSite">改網站名稱／關於</button>
             <button class="btn ghost" type="button" id="btnToken">設定上網權限</button>
           </div>` : ""}
         <div class="cat-grid" id="catGrid">
@@ -670,6 +682,10 @@
               <input class="edit-title" data-c="${c.id}" data-field="title" maxlength="20" value="${escapeHtml(c.title)}">
               <label class="edit-label">說明</label>
               <textarea class="edit-blurb" data-c="${c.id}" data-field="blurb" maxlength="40">${escapeHtml(c.blurb || "")}</textarea>
+              <div class="bar" style="margin-top:10px">
+                <button class="btn ghost" type="button" data-add-work="${c.id}">＋ 加作品</button>
+                <button class="btn danger" type="button" data-del-cat="${c.id}">刪除分類</button>
+              </div>
               ${moveButtons("cat", c.id, i, cats.length)}
             </div>` : `
             <a class="cat" href="#/c/${c.id}">
@@ -677,9 +693,13 @@
               <h2>${escapeHtml(c.title)}</h2>
               <p>${escapeHtml(c.blurb || "")}</p>
             </a>`).join("")}
+          ${editing ? `<button type="button" class="add-tile" data-add-cat>＋ 新增分類</button>` : ""}
         </div>
-        <div class="sec-head"><h2>精選作品</h2></div>
-        ${featured.length ? `<div class="work-grid">${featured.map(w => workCard(w, 0, 1)).join("")}</div>` : `<div class="empty">尚未有作品。撳右上角「編輯」就可以新增。</div>`}
+        <div class="sec-head">
+          <h2>精選作品</h2>
+          ${editing ? `<button class="btn accent" type="button" data-add-work="">＋ 新增作品</button>` : ""}
+        </div>
+        ${featured.length || editing ? `<div class="work-grid" id="homeWorks">${featured.map(w => workCard(w, 0, 1)).join("")}${editing ? `<button type="button" class="add-tile" data-add-work="">＋ 新增作品</button>` : ""}</div>` : `<div class="empty">尚未有作品。撳右上角「編輯」就可以新增。</div>`}
       `;
       if (editing) {
         $("app").querySelectorAll("[data-field][data-c]").forEach(el => {
@@ -695,6 +715,8 @@
         const bs = $("btnSite"), bt = $("btnToken");
         if (bs) bs.onclick = openSiteForm;
         if (bt) bt.onclick = () => openTokenForm(false);
+        bindAddButtons($("app"));
+        bindWorkFields($("app"));
         bindMoves($("app"));
         bindDrag($("catGrid"), "cat");
       }
@@ -706,17 +728,34 @@
       const list = worksIn(id);
       $("app").innerHTML = `
         <div class="bar"><a class="btn ghost" href="#/">← 回首頁</a>
-          ${editing ? `<button class="btn accent" type="button" id="btnAdd">＋ 新增作品</button>` : ""}
+          ${editing ? `<button class="btn accent" type="button" data-add-work="${id}">＋ 新增作品</button>` : `<button class="btn ghost" type="button" id="btnThisEdit">編輯呢頁</button>`}
         </div>
         <section class="hero">
-          <h1>${escapeHtml(c.title)}</h1>
-          <p class="lead">${escapeHtml(c.blurb || "")}</p>
+          ${editing ? `
+            <label class="edit-label">分類名稱</label>
+            <input class="edit-title" data-c="${c.id}" data-field="title" maxlength="20" value="${escapeHtml(c.title)}">
+            <label class="edit-label">說明</label>
+            <textarea class="edit-blurb" data-c="${c.id}" data-field="blurb" maxlength="40">${escapeHtml(c.blurb || "")}</textarea>
+          ` : `
+            <h1>${escapeHtml(c.title)}</h1>
+            <p class="lead">${escapeHtml(c.blurb || "")}</p>
+          `}
         </section>
-        ${editing ? `<p class="note">可以改標題、上移／下移、拖曳，或打開作品改封面、內文、影片。刪除前會再問一次。</p>` : ""}
-        ${list.length ? `<div class="work-grid" id="workGrid">${list.map((w, i) => workCard(w, i, list.length)).join("")}</div>` : `<div class="empty">${editing ? "呢個分類未有作品。撳「新增作品」。" : "呢個分類暫時未有作品。"}</div>`}
+        ${editing ? `<p class="note">可以加作品、改標題、上移／下移、拖曳，或打開作品改封面、內文、影片。刪除前會再問一次。</p>` : ""}
+        ${list.length || editing ? `<div class="work-grid" id="workGrid">${list.map((w, i) => workCard(w, i, list.length)).join("")}${editing ? `<button type="button" class="add-tile" data-add-work="${id}">＋ 新增作品</button>` : ""}</div>` : `<div class="empty">呢個分類暫時未有作品。</div>`}
       `;
-      const add = $("btnAdd");
-      if (add) add.onclick = () => addWork(id);
+      if (editing) {
+        $("app").querySelectorAll("[data-field][data-c]").forEach(el => {
+          el.addEventListener("input", () => {
+            c[el.getAttribute("data-field")] = el.value;
+            scheduleSave();
+            renderNav();
+          });
+        });
+        bindAddButtons($("app"));
+      } else {
+        bindThisEdit();
+      }
       bindWorkFields($("app"));
       bindMoves($("app"));
       bindDrag($("workGrid") || $("app"), "work");
@@ -762,6 +801,7 @@
           <div class="bar">
             <a class="btn ghost" href="#/">← 回首頁</a>
             ${cat ? `<a class="btn ghost" href="#/c/${cat.id}">← ${escapeHtml(cat.title)}</a>` : ""}
+            <button class="btn ghost" type="button" id="btnThisEdit">編輯呢篇</button>
           </div>
           ${renderMedia(w)}
           <div class="kicker">${escapeHtml(cat ? cat.title : "")}${w.demo ? `<span class="badge">示範</span>` : ""}</div>
@@ -775,12 +815,14 @@
       $("app").querySelectorAll(".hero-cover img, .gallery img, .story-fig img").forEach(img => {
         img.addEventListener("click", () => lightbox(img.src));
       });
+      bindThisEdit();
     }
 
     function renderWorkEdit(w, cat) {
       $("app").innerHTML = `
         <div class="bar">
           <a class="btn ghost" href="#/c/${w.category}">← ${escapeHtml(cat ? cat.title : "返回")}</a>
+          <button class="btn accent" type="button" data-add-work="${w.category}">＋ 新增作品</button>
           <button class="btn danger" type="button" id="btnDel">刪除</button>
         </div>
         <div class="form">
@@ -796,6 +838,12 @@
           <label class="edit-label">客戶／刊登媒體（可留空）</label>
           <input class="field" id="fClient" maxlength="80" value="${escapeHtml(w.client || "")}">
           <label class="edit-label">正文</label>
+          <div class="body-tools">
+            <button class="btn ghost" type="button" id="btnAddH">＋ 加標題</button>
+            <button class="btn ghost" type="button" id="btnAddP">＋ 加一段</button>
+            <button class="btn ghost" type="button" id="btnAddFig">＋ 加相片入正文</button>
+          </div>
+          <input class="hidden" id="fBodyPhoto" type="file" accept="image/*">
           <textarea class="field body-field" id="fBody">${escapeHtml(w.body || "")}</textarea>
           <label class="edit-label">封面</label>
           ${w.cover ? `<div class="cover" style="max-width:420px;margin:8px 0"><img src="${escapeHtml(w.cover)}" alt=""></div>` : ""}
@@ -834,6 +882,33 @@
         try { await saveContent("更新作品"); } catch (err) { toast(err.message); }
       };
       $("btnDel").onclick = () => confirmDelete(w.id);
+      bindAddButtons($("app"));
+      $("btnAddH").onclick = () => {
+        insertBodyText($("fBody"), "## 新標題");
+        grab(); scheduleSave();
+        toast("已加標題，可以改嗰幾個字");
+      };
+      $("btnAddP").onclick = () => {
+        insertBodyText($("fBody"), "在這裏寫內容");
+        grab(); scheduleSave();
+        toast("已加一段，可以喺正文改");
+      };
+      $("btnAddFig").onclick = () => $("fBodyPhoto").click();
+      $("fBodyPhoto").addEventListener("change", async e => {
+        const file = e.target.files && e.target.files[0];
+        e.target.value = "";
+        if (!file) return;
+        toast("上傳相片中…");
+        try {
+          const path = "media/" + w.id + "-" + Date.now().toString(36) + ".jpg";
+          const src = await uploadImage(file, path);
+          insertBodyText($("fBody"), "![](" + src.split("?")[0] + ")");
+          grab();
+          persistLocal();
+          await saveContent("加正文相片");
+          toast("已加相片入正文");
+        } catch (err) { toast(err.message); }
+      });
       $("fCover").addEventListener("change", async e => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
@@ -898,7 +973,10 @@
         return;
       }
       $("app").innerHTML = `
-        <div class="bar"><a class="btn ghost" href="#/">← 回首頁</a></div>
+        <div class="bar">
+          <a class="btn ghost" href="#/">← 回首頁</a>
+          <button class="btn ghost" type="button" id="btnThisEdit">編輯呢頁</button>
+        </div>
         <section class="hero">
           <h1>關於</h1>
         </section>
@@ -909,12 +987,14 @@
           ${s.youtube ? `<a href="${escapeHtml(s.youtube)}" target="_blank" rel="noopener">YouTube</a>` : ""}
         </p>
       `;
+      bindThisEdit();
     }
 
     function addWork(catId) {
+      const fallback = (content.categories[0] && content.categories[0].id) || "project";
       const w = {
         id: newId(),
-        category: catId,
+        category: catId || fallback,
         title: "未命名作品",
         blurb: "",
         body: "",
@@ -929,6 +1009,134 @@
       persistLocal();
       location.hash = "#/w/" + w.id;
       saveContent("新增作品").catch(err => toast(err.message));
+    }
+
+    function newCatId() {
+      let id = "c" + Date.now().toString(36);
+      while (catById(id)) id = "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 4);
+      return id;
+    }
+
+    function insertBodyText(textarea, text) {
+      if (!textarea) return;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const before = textarea.value.slice(0, start);
+      const after = textarea.value.slice(end);
+      const padBefore = !before ? "" : (before.endsWith("\n\n") ? "" : (before.endsWith("\n") ? "\n" : "\n\n"));
+      const padAfter = !after || after.startsWith("\n") ? "" : "\n\n";
+      const insertion = padBefore + text + padAfter;
+      textarea.value = before + insertion + after;
+      const pos = (before + padBefore + text).length;
+      textarea.focus();
+      textarea.setSelectionRange(pos, pos);
+      textarea.dispatchEvent(new Event("input"));
+    }
+
+    function bindThisEdit() {
+      const btn = $("btnThisEdit");
+      if (!btn) return;
+      btn.onclick = () => {
+        if (editing) return;
+        if (ghToken) enterEdit();
+        else openPinForm();
+      };
+    }
+
+    function bindAddButtons(root) {
+      if (!root) return;
+      root.querySelectorAll("[data-add-work]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.preventDefault(); e.stopPropagation();
+          const cat = btn.getAttribute("data-add-work");
+          if (cat) addWork(cat);
+          else openAddWork();
+        });
+      });
+      root.querySelectorAll("[data-add-cat]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.preventDefault(); e.stopPropagation();
+          openAddCat();
+        });
+      });
+      root.querySelectorAll("[data-del-cat]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.preventDefault(); e.stopPropagation();
+          confirmDeleteCat(btn.getAttribute("data-del-cat"));
+        });
+      });
+    }
+
+    function openAddWork() {
+      const cats = content.categories || [];
+      if (!cats.length) {
+        toast("請先加一個分類");
+        openAddCat();
+        return;
+      }
+      openModal(`
+        <h3>新增作品</h3>
+        <label class="edit-label">放喺邊個分類</label>
+        <select class="field" id="mCat">${cats.map(c =>
+          `<option value="${c.id}">${escapeHtml(c.title)}</option>`).join("")}</select>
+        <div class="row">
+          <button class="btn ghost" type="button" id="mCancel">取消</button>
+          <button class="btn accent" type="button" id="mOk">新增</button>
+        </div>`);
+      $("mCancel").onclick = closeModal;
+      $("mOk").onclick = () => {
+        const cat = $("mCat").value;
+        closeModal();
+        addWork(cat);
+      };
+    }
+
+    function openAddCat() {
+      openModal(`
+        <h3>新增分類</h3>
+        <label class="edit-label">分類名稱</label>
+        <input class="field" id="mTitle" maxlength="20" placeholder="例如：專題">
+        <label class="edit-label">一句說明（可留空）</label>
+        <input class="field" id="mBlurb" maxlength="40" placeholder="例如：專題與企劃">
+        <div class="row">
+          <button class="btn ghost" type="button" id="mCancel">取消</button>
+          <button class="btn accent" type="button" id="mOk">新增</button>
+        </div>`);
+      $("mTitle").focus();
+      $("mCancel").onclick = closeModal;
+      const go = () => {
+        const title = $("mTitle").value.trim() || "新分類";
+        const blurb = $("mBlurb").value.trim();
+        content.categories.push({ id: newCatId(), title, blurb });
+        closeModal();
+        renderNav();
+        route();
+        saveContent("新增分類").catch(err => toast(err.message));
+      };
+      $("mOk").onclick = go;
+      $("mTitle").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+    }
+
+    function confirmDeleteCat(id) {
+      const c = catById(id);
+      if (!c) return;
+      const n = worksIn(id).length;
+      openModal(`
+        <h3>刪除分類</h3>
+        <p>確定刪除「${escapeHtml(c.title)}」${n ? `？裏面 ${n} 件作品都會一齊刪` : "？"}</p>
+        <div class="row">
+          <button class="btn ghost" type="button" id="mCancel">取消</button>
+          <button class="btn accent" type="button" id="mOk">刪除</button>
+        </div>`);
+      $("mCancel").onclick = closeModal;
+      $("mOk").onclick = async () => {
+        content.categories = content.categories.filter(x => x.id !== id);
+        content.works = content.works.filter(x => x.category !== id);
+        closeModal();
+        if (hashParts()[1] === id) location.hash = "#/";
+        else { renderNav(); route(); }
+        try { await saveContent("刪除分類"); } catch (err) { toast(err.message); }
+      };
     }
 
     function openSiteForm() {
@@ -1042,6 +1250,7 @@
     function route() {
       if (!content) return;
       renderNav();
+      window.scrollTo(0, 0);
       const parts = hashParts();
       if (parts[0] === "c" && parts[1]) return renderCategory(parts[1]);
       if (parts[0] === "w" && parts[1]) return renderWork(parts[1]);
