@@ -1063,7 +1063,7 @@
         if (local) content = JSON.parse(local);
       } catch (_) {}
       try {
-        const res = await fetch("content.json?t=" + Date.now(), { cache: "no-store" });
+        const res = await fetch("content.json?v=20260920&t=" + Date.now(), { cache: "no-store" });
         if (res.ok) content = await res.json();
       } catch (_) {}
       if (!content) content = DEFAULT_CONTENT;
