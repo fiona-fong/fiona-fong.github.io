@@ -781,7 +781,8 @@
       const src = String(w.video || "");
       if (/\.(mp4|webm|ogg)(\?|$)/i.test(src)) {
         const poster = w.cover ? ` poster="${escapeHtml(w.cover)}"` : "";
-        return `<div class="video-wrap square"><video src="${escapeHtml(src)}" controls playsinline preload="metadata"${poster}></video></div>`;
+        const square = w.square || /sundaykiss/i.test(src);
+        return `<div class="video-wrap${square ? " square" : ""}"><video src="${escapeHtml(src)}" controls playsinline preload="metadata"${poster}></video></div>`;
       }
       const embed = videoEmbed(src);
       if (embed) {
@@ -1272,7 +1273,7 @@
         if (local) content = JSON.parse(local);
       } catch (_) {}
       try {
-        const res = await fetch("content.json?v=20260921&t=" + Date.now(), { cache: "no-store" });
+        const res = await fetch("content.json?v=20260921c&t=" + Date.now(), { cache: "no-store" });
         if (res.ok) content = await res.json();
       } catch (_) {}
       if (!content) content = DEFAULT_CONTENT;
